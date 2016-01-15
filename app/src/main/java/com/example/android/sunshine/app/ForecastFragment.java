@@ -30,9 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class ForecastFragment extends Fragment {
 
     public ForecastFragment() {
@@ -65,6 +62,9 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item); 
     } 
 
+    /*
+     * Implement ListView   
+     */ 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -81,6 +81,15 @@ public class ForecastFragment extends Fragment {
         };
         List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
+        /* 
+        * public ArrayAdapter (Context context, int resource, int textViewResourceId, T[] objects)
+        *
+        * Parameters
+        *       context 	        The current context.
+        *       resource 	        The resource ID for a layout file containing a layout to use when instantiating views.
+        *       textViewResourceId 	The id of the TextView within the layout resource to be populated
+        *       objects 	        The objects to represent in the ListView.  
+        */
         ArrayAdapter<String> mForcastAdapter = new ArrayAdapter<String>(
                 this.getActivity(),
                 R.layout.list_item_forcast,
@@ -100,6 +109,7 @@ public class ForecastFragment extends Fragment {
             if (params.length == 0) {
                 return null; 
             }
+            
             // These two need to be declared outside the try/catch
             // so that they can be closed in the finally block.
             HttpURLConnection urlConnection = null;
@@ -193,7 +203,7 @@ public class ForecastFragment extends Fragment {
             return shortenedDateFormat.format(time);
         }
 
-        /**
+        /*
          * Prepare the weather high/lows for presentation.
          */
         private String formatHighLows(double high, double low) {
@@ -205,7 +215,7 @@ public class ForecastFragment extends Fragment {
             return highLowStr;
         }
 
-        /**
+        /*
          * Take the String representing the complete forecast in JSON Format and
          * pull out the data we need to construct the Strings needed for the wireframes.
          *
