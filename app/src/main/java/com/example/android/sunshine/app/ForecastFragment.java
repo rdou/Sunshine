@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ForecastFragment extends Fragment {
+    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -38,9 +39,16 @@ public class ForecastFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // Report that this fragment would like to participate in populating 
+        // the options menu by receiving a call to onCreateOptionsMenu(Menu, MenuInflater) 
+        // and related methods.
         setHasOptionsMenu(true);
     }
-
+    
+    /*
+     * Menu click handler 
+     */ 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.forecastfragment, menu);
@@ -51,7 +59,11 @@ public class ForecastFragment extends Fragment {
         int id = item.getItemId();
         
         if (id == R.id.action_refresh) {
+
+            // fetch weather information in async mode(background) 
             FetchWeatherTask fetchweathertask = new FetchWeatherTask();
+
+            // 94043 is the postcode
             fetchweathertask.execute("94043"); 
             return true;
         }
@@ -79,6 +91,7 @@ public class ForecastFragment extends Fragment {
                 "Sat - HELP TRAPPED IN WEATHERSTATION - 60/51",
                 "Sun - Sunny - 80/68"
         };
+
         List<String> weekForecast = new ArrayList<String>(Arrays.asList(forecastArray));
 
         /* 
@@ -90,19 +103,20 @@ public class ForecastFragment extends Fragment {
         *       textViewResourceId 	The id of the TextView within the layout resource to be populated
         *       objects 	        The objects to represent in the ListView.  
         */
-        ArrayAdapter<String> mForcastAdapter = new ArrayAdapter<String>(
+        mForecastAdapter = new ArrayAdapter<String>(
                 this.getActivity(),
                 R.layout.list_item_forcast,
                 R.id.list_item_forcast_textview,
                 weekForecast);
 
         ListView forcastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        forcastListView.setAdapter(mForcastAdapter);
+        forcastListView.setAdapter(mForecastAdapter);
 
         return rootView;
     }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+        private final String LOG_TAG = "ForecastFragment"; 
 
         @Override
         protected String[] doInBackground(String... params) {
@@ -138,7 +152,7 @@ public class ForecastFragment extends Fragment {
                                   .build(); 
                 
                 URL url = new URL(builtUri.toString());
-               
+
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("GET");
@@ -167,7 +181,7 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
             } catch (IOException e) {
-                Log.e("ForecastFragment", "Error ", e);
+                Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
                 // to parse it.
                 forecastJsonStr = null;
@@ -179,18 +193,28 @@ public class ForecastFragment extends Fragment {
                     try {
                         reader.close();
                     } catch (final IOException e) {
-                        Log.e("ForecastFragment", "Error closing stream", e);
+                        Log.e(LOG_TAG, "Error closing stream", e);
                     }
                 }
             }
 
             try {
-                return getWeatherDataFromJson(forecastJsonStr, numDays);
+                return getWeatherDataFromJson(forecastJsonStr, numDays); 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                mForecastAdapter.clear();
+                for(String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+            }
         }
         
         /* The date/time conversion code is going to be moved outside the asynctask later,
@@ -284,7 +308,7 @@ public class ForecastFragment extends Fragment {
                 highAndLow = formatHighLows(high, low);
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
-
+            
             return resultStrs;
         }
     }
