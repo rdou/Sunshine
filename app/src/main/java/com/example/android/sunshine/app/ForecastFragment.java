@@ -1,5 +1,6 @@
 package com.example.android.sunshine.app;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -104,13 +106,34 @@ public class ForecastFragment extends Fragment {
         *       objects 	        The objects to represent in the ListView.  
         */
         mForecastAdapter = new ArrayAdapter<String>(
-                this.getActivity(),
+                getActivity(),
                 R.layout.list_item_forcast,
                 R.id.list_item_forcast_textview,
                 weekForecast);
 
         ListView forcastListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         forcastListView.setAdapter(mForecastAdapter);
+        
+        // set Item click listener 
+        //  
+        forcastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            /* Parameters
+               parent	    The AdapterView where the click happened.
+               view	        The view within the AdapterView that was clicked (this will be a view provided by the adapter)
+               position	    The position of the view in the adapter.
+               id	        The row id of the item that was clicked.
+            */
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                
+                // get item from adapter 
+                String text = mForecastAdapter.getItem(position);
+                
+                //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+                Intent showDetail = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
+                startActivity(showDetail); 
+            }
+        });
 
         return rootView;
     }
