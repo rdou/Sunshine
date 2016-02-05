@@ -115,7 +115,8 @@ public class ForecastFragment extends Fragment {
         forcastListView.setAdapter(mForecastAdapter);
         
         // set Item click listener 
-        //  
+        //
+        Log.v("ForecastFragment", "before click");
         forcastListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             /* Parameters
@@ -131,7 +132,8 @@ public class ForecastFragment extends Fragment {
                 
                 //Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
                 Intent showDetail = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, text);
-                startActivity(showDetail); 
+                Log.v("ForecastFragment", text);
+                startActivity(showDetail);
             }
         });
 
