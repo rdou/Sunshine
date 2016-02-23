@@ -83,7 +83,26 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        /* 
+        * public View inflate (XmlPullParser parser, ViewGroup root, boolean attachToRoot)
+        * 
+        * Inflate a new view hierarchy from the specified XML node. Throws InflateException if there is an error.
+        * 
+        * Important   For performance reasons, view inflation relies heavily on pre-processing of XML files that is 
+        * done at build time. Therefore, it is not currently possible to use LayoutInflater with an XmlPullParser over 
+        * a plain XML file at runtime.
+        * 
+        * Parameters
+        * parser	XML dom node containing the description of the view hierarchy.
+        * 
+        * root	Optional view to be the parent of the generated hierarchy (if attachToRoot is true), or else simply an 
+        * object that provides a set of LayoutParams values for root of the returned hierarchy (if attachToRoot is false.)
+        * 
+        * attachToRoot	Whether the inflated hierarchy should be attached to the root parameter? If false, root is only 
+        * used to create the correct subclass of LayoutParams for the root view in the XML.
+        */
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
         String[] forecastArray = {
                 "Today - Sunny - 88/63",
                 "Tomorrow -Foggy - 72/63",
